@@ -1,11 +1,12 @@
 import cv2
 import time
 import psutil
+import platform
+import config
 
-if __name__ == '__main__':
-
-    # Start default camera
-    video = cv2.VideoCapture("/dev/video0")
+def calc_fps():
+    device = config.get_device()
+    video = cv2.VideoCapture(device)
 
     fps = video.get(cv2.CAP_PROP_FPS)
     print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
@@ -19,7 +20,6 @@ if __name__ == '__main__':
 
     # Number of frames to capture
     num_frames = 120
-
     print("Capturing {0} frames".format(num_frames))
 
     # Start time
@@ -55,3 +55,6 @@ if __name__ == '__main__':
 
     # Release video
     video.release()
+
+if __name__ == '__main__':
+    calc_fps()

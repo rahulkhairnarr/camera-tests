@@ -1,6 +1,6 @@
 import cv2
 import time
-
+import config
 
 def test_resolution(w, h):
     capture = cv2.VideoCapture(0)
@@ -32,8 +32,8 @@ def test_resolution(w, h):
     cv2.destroyAllWindows()
 
 
-def run():
-    resolutions = [(320, 480), (640, 480), (800, 600), (1280, 720), (1920, 1080)]
+def test_fps_run():
+    resolutions = config.get_supported_resolutions()
     for res in resolutions:
         try:
             test_resolution(res[0], res[1])
@@ -42,4 +42,4 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    test_fps_run()
