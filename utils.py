@@ -9,5 +9,5 @@ class Utils(object):
         pass
 
     def get_resolutions(self):
-        v4l2.
+        pass 
 

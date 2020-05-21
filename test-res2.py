@@ -17,10 +17,10 @@ def test_resolution(w, h):
        ret, frame = capture.read()
        if num_frames < 60:
            num_frames = num_frames + 1
-           # cv2.imshow('Test', frame)
-           # key = cv2.waitKey(10)
-           # if key == 27:
-           #     break
+           cv2.imshow('Test', frame)
+           key = cv2.waitKey(10)
+           if key == 27:
+                break
        else:
            break
 
