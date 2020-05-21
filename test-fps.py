@@ -10,6 +10,13 @@ if __name__ == '__main__':
     fps = video.get(cv2.CAP_PROP_FPS)
     print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
 
+    w, h = 1920, 1080
+    size_new = video.set(cv2.CAP_PROP_FRAME_WIDTH, w), video.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
+    size = video.get(cv2.CAP_PROP_FRAME_WIDTH), video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+    fps = video.get(cv2.CAP_PROP_FPS)
+    print("NEW Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+
     # Number of frames to capture
     num_frames = 120
 
