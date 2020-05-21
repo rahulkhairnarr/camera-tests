@@ -5,12 +5,7 @@ import psutil
 if __name__ == '__main__':
 
     # Start default camera
-    video = cv2.VideoCapture(2)
-    print("Updated video resolution. New Reoslution: {}x{}".format(video.get(3), video.get(4)))
-
-    # Find OpenCV version
-    # fps = video.get(cv2.cv.CV_CAP_PROP_FPS)
-    # print("Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps))
+    video = cv2.VideoCapture("/dev/video0")
 
     fps = video.get(cv2.CAP_PROP_FPS)
     print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
@@ -33,12 +28,12 @@ if __name__ == '__main__':
         if num_frames >= 100:
             break
 
-        # try:
-        #     cv2.imshow('Test', frame)
-        #     if cv2.waitKey(10) == 27:
-        #         break  # esc to quit
-        # except Exception as ex:
-        #     pass
+        try:
+            cv2.imshow('Test', frame)
+            if cv2.waitKey(10) == 27:
+                break  # esc to quit
+        except Exception as ex:
+            pass
 
     # End time
     end = time.time()
