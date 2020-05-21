@@ -5,14 +5,7 @@ import psutil
 if __name__ == '__main__':
 
     # Start default camera
-    video = cv2.VideoCapture(0)
-
-    width = 1280
-    height = 960
-
-    video.set(3, width)
-    video.set(4, height)
-
+    video = cv2.VideoCapture(2)
     print("Updated video resolution. New Reoslution: {}x{}".format(video.get(3), video.get(4)))
 
     # Find OpenCV version
@@ -31,18 +24,28 @@ if __name__ == '__main__':
     start = time.time()
 
     # Grab a few frames
-    for i in range(num_frames):
+    num_frames = 0
+    while True:
+        num_frames+=1
+
         ret, frame = video.read()
-        cv2.imshow('Video', frame)
-        # cv2.imwrite(f'{i}.jpg', frame)
-        print(psutil.cpu_percent())
+
+        if num_frames >= 100:
+            break
+
+        # try:
+        #     cv2.imshow('Test', frame)
+        #     if cv2.waitKey(10) == 27:
+        #         break  # esc to quit
+        # except Exception as ex:
+        #     pass
 
     # End time
     end = time.time()
 
     # Time elapsed
     seconds = end - start
-    print("Time taken : {0} seconds".format(seconds))
+    print("Time taken : {} seconds, Num Frames: {}".format(seconds, num_frames))
 
     # Calculate frames per second
     fps = num_frames / seconds
