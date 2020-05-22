@@ -5,6 +5,7 @@ import config
 import subprocess
 import re
 import json 
+import threading
 from singleton_decorator import singleton
 
 @singleton
@@ -16,6 +17,8 @@ class Camera(object):
         self.title = 'Camera Tests'
         self.cam = cv2.VideoCapture(self.device)
         self.window = cv2.namedWindow(self.window_name)
+        self._thread = threading.Thread(target=self.show_cam_thread)
+        self._thread.daemon = True
 
     def open_cam(self):
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
@@ -27,11 +30,22 @@ class Camera(object):
         self.cam.release()
         self.cam = None
         cv2.destroyAllWindows()
+        self.window = None
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
 
     def update_title(self, title):
         # Update title within the imshow window.
         self.title = title
+
+    def show_cam_thread(self):
+        self.open_cam()
+        self.show_cam()
+        self.close_cam()
+
+    def start_cam_thread(self):
+        print('Starting camera display thread')
+        self._thread.start()
+        time.sleep(5)
 
     def show_cam(self):
         # Camera must be opened before calling this method.
@@ -239,6 +253,20 @@ class Camera(object):
                     print('.. Error setting parameter {}'.format(key))
 
         print('Done.')
+
+    def cam_parameter_range_test(self, param, min, max, step, default):
+        self.update_title('{} TESTS: {} --> {}, Default: {}'.format(param, min, max, default))
+        time.sleep(3)
+        for val in range(min, max, step):
+            print('Changing {} to: {}'.format(param, val))
+            self.update_title('{}: Current {}, Default {}'.format(param.upper(), val, default))
+            self.set_param(param, val)
+            time.sleep(1)
+
+        print('{} tests complete. Resetting to defaults.')
+        self.update_title('{} TEST: Resetting to defaults.'.format(param))
+        self.reset_params_to_default()
+        time.sleep(3)
 
 def main():
     cam_test = Camera()

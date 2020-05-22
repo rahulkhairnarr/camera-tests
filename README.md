@@ -1,27 +1,57 @@
 # Camera Tests
-This project provides scripts for automated testing of cameras. These tests include:
-- Using OpenCV to open and display camera.
-- Calculating FPS for the camera.
-- Updating various v4l2 parameters and calculating FPS and quality with them.
-- Resetting v4l2 parameters so camera can go back to its initial state.
 
-# Build and Test Python code
+This repository provides automated test cases for validating web-camera functionality.
+
+## Pre-requisites
+This test-suite is validated on Ubuntu 18.04 operating system with Intel and NVIDIA Jetson chipsets.
+
+* Install Python 3.x Latest Version
 ```
-git clone <this repo>
+sudo apt-get update
+sudo apt-get install python3.6
+```
+
+* Validate Python is working
+```
+python3 --version
+```
+
+* Install Video4Linux2 Dependencies
+```
+sudo apt-get update
+suto apt-get install v4l-utils
+```
+
+* Validate v4l2 is working
+```
+v4l2-ctl --list-devices
+<Should show list of connected USB cameras.>
+```
+
+## Installation
+* Clone this repository
+```
+git clone https://coolertech@dev.azure.com/coolertech/mp-on-shelf-availability/_git/camera-tests
 cd camera-tests
-pip install -r requirements.txt
-python3 run-all-tests.py
-python3 set-optimal-params.py
-python3 reset-params.py
 ```
 
-# Build and Test C code.
+* Install python dependencies (create a virtual env if needed)
 ```
-cd v4l2ctrl
-mkdir build
-cd build
-cmake ..
-make
+pip3 install -r requirements.txt
 ```
-This will build v4l2ctrl application. 
 
+## Run Tests
+* Run individual tests
+```
+python3 camera-fps-test.py
+python3 camera-params-test.py
+python3 camera-aperture-test.py
+<etc>
+```
+
+* Run all tests
+```
+python3 all-tests.py
+```
+
+* Most tests do require manual observation. Go through individual test documentation for more details.

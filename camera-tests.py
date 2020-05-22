@@ -1,6 +1,5 @@
 import time
 import config
-import threading
 from singleton_decorator import singleton
 from camera import Camera
 
@@ -8,18 +7,10 @@ from camera import Camera
 class CameraTests(object):
     def __init__(self):
         self.cam = Camera()
-        self._thread = threading.Thread(target=self.show_cam_thread)
-        self._thread.daemon = True
-
-    def show_cam_thread(self):
-        print('Starting cam display on second thread.')
-        self.cam.open_cam()
-        self.cam.show_cam()
-        self.cam.close_cam()
 
     def test_fps_simple(self):
         self.cam.open_cam()
-        self.cam.show_cam()
+        self.cam.show_cam_thread()
         self.cam.close_cam()
 
     def test_fps_iterative(self):
@@ -41,9 +32,7 @@ class CameraTests(object):
         self.cam.reset_params_to_default()
 
         # Start the camera display on another thread.
-        print('Starting camera display thread')
-        self._thread.start()
-        time.sleep(5)
+        self.cam.start_cam_thread()
 
         # Run different tests for changing camera parameters.
 
@@ -79,7 +68,7 @@ class CameraTests(object):
         self._cam_param_test_num('exposure_absolute', 3, 10, 2047, 166)
 
         # Change wb_temperature_auto to manual first.
-        # white_balance_temperature: 2800 --> 6500, default 4600
+        # white_balance_temperature: 3000 --> 6500, default 4600
         self.cam.set_param('white_balance_temperature_auto', 0)
         self._cam_param_test_num('white_balance_temperature', 2800, 6500, 100, 4600)
 

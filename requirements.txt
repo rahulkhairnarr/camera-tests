@@ -1,5 +1,4 @@
 singleton_decorator
-v4l2
 psutil
 numpy
 opencv-python>=4.0
