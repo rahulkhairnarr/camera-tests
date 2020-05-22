@@ -1,3 +1,4 @@
+import time
 import config
 import threading
 from singleton_decorator import singleton
@@ -13,12 +14,12 @@ class CameraTests(object):
     def show_cam_thread(self):
         print('Starting cam display on second thread.')
         self.cam.open_cam()
-        self.show_cam()
+        self.cam.show_cam()
         self.cam.close_cam()
 
     def test_fps_simple(self):
         self.cam.open_cam()
-        self.show_cam()
+        self.cam.show_cam()
         self.cam.close_cam()
 
     def test_fps_iterative(self):
@@ -36,7 +37,9 @@ class CameraTests(object):
 
     def test_cam_params(self):
         # Start the camera display on another thread.
+        print('Starting camera display thread')
         self._thread.start()
+        time.sleep(5)
 
         # Run different tests for changing camera parameters.
 
