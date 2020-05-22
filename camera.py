@@ -225,10 +225,9 @@ class Camera(object):
             default_value = param_details['values']['default']
             current_value = param_details['values']['value']
 
-            # Exposure absolute default value is either 166 or 78 (not sure why)
+            # Exposure absolute default value 78 (though default says 166) (not sure why)
             if key == 'exposure_absolute':
-                if current_value == default_value or current_value == 166:
-                    continue
+                default_value = 78
 
             if default_value != current_value:
                 print('.. Setting {} to default value {}'.format(key, default_value))
