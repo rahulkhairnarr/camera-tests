@@ -184,10 +184,9 @@ class Camera(object):
             return False
 
         # Construct the v4l2 command to set the parameter.
-        cmd = 'v4l2-ctl -d {} --set-ctrl={}={}'.format(self.device, name, value)
-        print('Running command: {}'.format(cmd))
-        output = subprocess.run([cmd])
-
+        cmd = ['v4l2-ctl', '-d', self.device, '--set-ctrl={}={}'.format(name, value)]
+        print('Running command: {}'.format(' '.join(cmd)))
+        output = subprocess.check_output(cmd)
         print('Done.')
 
 def main():
