@@ -46,7 +46,9 @@ class CameraTests(object):
         # Brightness: 0 --> 64
         for val in range(-64, 64, 8):
             print('Changing brghtness to: {}'.format(val))
+            self.cam.update_title('TEST: Brightness: {}'.format(val))
             self.cam.set_param('brightness', val)
+            time.sleep(1)
 
         print('Brightness tests complete. Resetting to default')
         self.cam.reset_params_to_default()
@@ -54,7 +56,9 @@ class CameraTests(object):
         # Contrast: 0 --> 64
         for val in range(0, 64, 4):
             print('Changing contrast to: {}'.format(val))
+            self.cam.update_title('TEST: Contrast: {}'.format(val))
             self.cam.set_param('contrast', val)
+            time.sleep(1)
 
         print('Contrast tests complete. Resetting to default')
         self.cam.reset_params_to_default()
