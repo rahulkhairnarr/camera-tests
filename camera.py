@@ -115,14 +115,16 @@ class Camera(object):
             print('Updated resolution to: {}x{}'.format(int(w), int(h)))
 
     def get_params(self):
+
         # Get camera parameters through v4l2-ctl
         device = config.get_device()
         res = subprocess.check_output(['v4l2-ctl', '-d', device, '-l']).decode('utf-8')
-        # Output should look like:
+
+        # Output lines should look like:
         # brightness 0x00980900 (int|bool|menu) : min=x max=x step=1 default=0 value=0 flags=x
-        print('Output of >>>> v4l2-ctl -d {} -l'.format(device))
-        print(res)
-        print('- - - - - - - - -')
+        # print('Output of >>>> v4l2-ctl -d {} -l'.format(device))
+        # print(res)
+        # print('- - - - - - - - -')
         params = {}
 
         for line in res.splitlines():
@@ -157,13 +159,50 @@ class Camera(object):
 
         return params
 
+    def set_params(self, name, value):
+        # Validate input values.
+        params = self.get_params()
+        if name not in params.keys():
+            print('ERROR: Unknown parameter {}'.format(name))
+            return False
+
+        param_details = params[name]
+        if param_details['type'] == 'int' or param_details['type'] == 'menu':
+            if value < param_details['values']['min'] or value > param_details['values']['max']:
+                print('{} should be between {} and {}, default is {}'.format(
+                    name,
+                    param_details['values']['min'],
+                    param_details['values']['max'],
+                    param_details['values']['default']))
+                return False
+        elif param_details['type'] == 'bool':
+            if value != 0 or value != 1 or value != True or value != False:
+                print('{} should be boolean (0 or 1)'.format(name))
+                return False
+        else:
+            print('Invalid parameter type for {}'.format(name))
+            return False
+
+        # Construct the v4l2 command to set the parameter.
+        cmd = 'v4l2-ctl -d {} --set-ctrl={}={}'.format(self.device, name, value)
+        print('Running command: {}'.format(cmd))
+        output = subprocess.run([cmd])
+
+        print('Done.')
+
 def main():
     cam_test = Camera()
     results = cam_test.get_params()
     with open('cam_params.json', 'w') as f:
         json.dump(results, f, indent=2)
-    print('Done')
 
+    cam_test.set_params('brightness', 30)
+
+    results = cam_test.get_params()
+    with open('cam_params2.json', 'w') as f:
+        json.dump(results, f, indent=2)
+
+    print('Done')
 
 if __name__ == '__main__':
     main()
