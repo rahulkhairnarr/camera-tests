@@ -58,8 +58,14 @@ class Camera(object):
         start_time = time.time()
         num_frames = 0
         key = None
+
         while True:
             num_frames += 1
+
+            # This is needed to keep FPS as a moving average of last 10 frames
+            if num_frames % 10 == 0:
+                num_frames = 1
+                start_time = time.time()
 
             ret, frame = self.cam.read()
             if ret == -1 or frame is None:
@@ -67,6 +73,7 @@ class Camera(object):
                 continue
 
             try:
+
                 end_time = time.time()
                 time_diff = end_time - start_time
                 fps = num_frames / time_diff
@@ -256,17 +263,17 @@ class Camera(object):
 
     def cam_parameter_range_test(self, param, min, max, step, default):
         self.update_title('{} TESTS: {} --> {}, Default: {}'.format(param, min, max, default))
-        time.sleep(3)
+        time.sleep(5)
         for val in range(min, max, step):
             print('Changing {} to: {}'.format(param, val))
             self.update_title('{}: Current {}, Default {}'.format(param.upper(), val, default))
             self.set_param(param, val)
-            time.sleep(1)
+            time.sleep(2)
 
         print('{} tests complete. Resetting to defaults.')
         self.update_title('{} TEST: Resetting to defaults.'.format(param))
         self.reset_params_to_default()
-        time.sleep(3)
+        time.sleep(5)
 
 def main():
     cam_test = Camera()
