@@ -75,11 +75,11 @@ class CameraTests(object):
         # exposure_auto and exposure_absolute
 
     def _cam_param_test_num(self, param, min, max, step, default):
-        self.cam.update_title('{} TEST:{} --> {}, Default: {}'.format(param, min, max, default))
+        self.cam.update_title('{} TESTS: {} --> {}, Default: {}'.format(param, min, max, default))
         time.sleep(5)
         for val in range(min, max, step):
             print('Changing {} to: {}'.format(param, val))
-            self.cam.update_title('{} TEST: Saturation: {} [Default {}]'.format(param, val, default))
+            self.cam.update_title('{} TEST: Current {}, Default {}'.format(param, val, default))
             self.cam.set_param(param, val)
             time.sleep(1)
 
