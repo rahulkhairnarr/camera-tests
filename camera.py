@@ -178,6 +178,7 @@ class Camera(object):
             print('.... ERROR: Unknown parameter {}'.format(name))
             return False
 
+        # Validate input values for params.
         param_details = params[name]
         if param_details['type'] == 'int' or param_details['type'] == 'menu':
             if value < param_details['values']['min'] or value > param_details['values']['max']:
@@ -195,6 +196,20 @@ class Camera(object):
             print('.... Invalid parameter type for {}'.format(name))
             return False
 
+        # exposure_absolute is only editable if exposure_auto is set to manual (1)
+        if name == 'exposure_absolute':
+            exposure_auto_val = params['exposure_auto']['values']['value']
+            if exposure_auto_val != 1:
+                # print('.... exposure_absolute is only editable if exposure_auto is set to manual (1)')
+                return False
+
+        # focus_absolute is only editable if focus_auto is set to manual (1)
+        if name == 'focus_absolute':
+            focus_auto_val = params['focus_auto']['values']['value']
+            if focus_auto_val != 1:
+                # print('.... focus_absolute is only editable if focus_auto is set to manual (1)')
+                return False
+
         # Construct the v4l2 command to set the parameter.
         cmd = ['v4l2-ctl', '-d', self.device, '--set-ctrl={}={}'.format(name, value)]
         print('.... Command: {}'.format(' '.join(cmd)))
@@ -209,6 +224,12 @@ class Camera(object):
             param_details = params[key]
             default_value = param_details['values']['default']
             current_value = param_details['values']['value']
+
+            # Exposure absolute default value is either 166 or 78 (not sure why)
+            if key == 'exposure_absolute':
+                if current_value == default_value or current_value == 166:
+                    continue
+
             if default_value != current_value:
                 print('.. Setting {} to default value {}'.format(key, default_value))
                 ret = self.set_param(key, default_value)
