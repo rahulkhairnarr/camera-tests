@@ -4,6 +4,7 @@ import cv2
 import config
 import subprocess
 import re
+import json 
 from singleton_decorator import singleton
 
 @singleton
@@ -119,30 +120,50 @@ class Camera(object):
         res = subprocess.check_output(['v4l2-ctl', '-d', device, '-l']).decode('utf-8')
         # Output should look like:
         # brightness 0x00980900 (int|bool|menu) : min=x max=x step=1 default=0 value=0 flags=x
-        print('Output of \n: v4l2-ctl -d {} -l'.format(device))
+        print('Output of >>>> v4l2-ctl -d {} -l'.format(device))
         print(res)
         print('- - - - - - - - -')
-        params = []
+        params = {}
 
         for line in res.splitlines():
-            param = {}
-            regex = re.compile('\s+(\w+)\s+(0[xX][0-9a-fA-F]+)\s+\((\w+)\)\s+:\s+(.+)')
+            line = line.strip()
+            regex = re.compile('(\w+)\s+(0[xX][0-9a-fA-F]+)\s+\((\w+)\)\s+:\s+(.+)')
             match = regex.match(line)
-            if match is not None and match.group(0) is not None:
-                param_name = match.group(0)
-                param[param_name] = {}
-                param[param_name]['hex_code'] = match.group(1)
-                param[param_name]['type'] = match.group(2)
-                param[param_name]['value'] = match.group(3)
+            if match is not None and match.group(1) is not None:
+                param_name = match.group(1)
+                params[param_name] = {}
 
-                params.append(param)
+                param = {}
+                param['hex_code'] = match.group(2)
+                param['type'] = match.group(3)
+                param['values'] = {}
+                
+                values_str = match.group(4)
+                values = values_str.split(' ')
+
+                for val in values:
+                    val = val.strip()
+                    val_name = val.split('=')[0]
+                    val_val = val.split('=')[1]
+                    
+                    try:
+                        val_val = int(val_val)
+                    except:
+                        pass
+
+                    param['values'][val_name] = val_val
+
+                params[param_name] = param
 
         return params
 
 def main():
     cam_test = Camera()
     results = cam_test.get_params()
-    print(results)
+    with open('cam_params.json', 'w') as f:
+        json.dump(results, f, indent=2)
+    print('Done')
+
 
 if __name__ == '__main__':
     main()
