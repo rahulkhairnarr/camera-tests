@@ -36,6 +36,9 @@ class CameraTests(object):
                 break
 
     def test_cam_params(self):
+        # Start with 1080p resolution
+        self.cam.update_resolution(1920, 1080)
+
         # Start the camera display on another thread.
         print('Starting camera display thread')
         self._thread.start()
