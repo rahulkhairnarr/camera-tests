@@ -13,6 +13,7 @@ class Camera(object):
         self.device = config.get_device()
         self.cam = None
         self.window_name = 'Camera'
+        self.title = 'Camera Tests'
 
     def open_cam(self):
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
@@ -24,6 +25,10 @@ class Camera(object):
         self.cam = None
         cv2.destroyAllWindows()
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
+
+    def update_title(self, title):
+        # Update title within the imshow window.
+        self.title = title
 
     def show_cam(self):
         # Camera must be opened before calling this method.
@@ -53,6 +58,13 @@ class Camera(object):
                 font_size = 2
                 thickness = 2
                 color = (230, 80, 0)
+
+                # Print Test Title in the Top left
+                title_txt = self.title
+                box_size, _ = cv2.getTextSize(title_txt, font, font_size, thickness)
+                txt_size = box_size[0]
+                txt_loc = (20, 35)
+                cv2.putText(frame, title_txt, txt_loc, font, font_size, color, thickness)
 
                 # Print FPS in the bottom right
                 fps_txt = 'FPS: {:.2f}'.format(fps)
@@ -159,17 +171,17 @@ class Camera(object):
 
         return params
 
-    def set_params(self, name, value):
+    def set_param(self, name, value):
         # Validate input values.
         params = self.get_params()
         if name not in params.keys():
-            print('ERROR: Unknown parameter {}'.format(name))
+            print('.... ERROR: Unknown parameter {}'.format(name))
             return False
 
         param_details = params[name]
         if param_details['type'] == 'int' or param_details['type'] == 'menu':
             if value < param_details['values']['min'] or value > param_details['values']['max']:
-                print('{} should be between {} and {}, default is {}'.format(
+                print('.... {} should be between {} and {}, default is {}'.format(
                     name,
                     param_details['values']['min'],
                     param_details['values']['max'],
@@ -177,16 +189,32 @@ class Camera(object):
                 return False
         elif param_details['type'] == 'bool':
             if value != 0 or value != 1 or value != True or value != False:
-                print('{} should be boolean (0 or 1)'.format(name))
+                print('.... {} should be boolean (0 or 1)'.format(name))
                 return False
         else:
-            print('Invalid parameter type for {}'.format(name))
+            print('.... Invalid parameter type for {}'.format(name))
             return False
 
         # Construct the v4l2 command to set the parameter.
         cmd = ['v4l2-ctl', '-d', self.device, '--set-ctrl={}={}'.format(name, value)]
-        print('Running command: {}'.format(' '.join(cmd)))
+        print('.... Command: {}'.format(' '.join(cmd)))
         output = subprocess.check_output(cmd)
+        print('.... Done.')
+        return True
+
+    def reset_params_to_default(self):
+        print('Resetting all params to default.')
+        params = self.get_params()
+        for key in params.keys():
+            param_details = params[key]
+            default_value = param_details['values']['default']
+            current_value = param_details['values']['value']
+            if default_value != current_value:
+                print('.. Setting {} to default value {}'.format(key, default_value))
+                ret = self.set_param(key, default_value)
+                if ret is False:
+                    print('.. Error setting parameter {}'.format(key))
+
         print('Done.')
 
 def main():
@@ -201,7 +229,8 @@ def main():
     with open('cam_params2.json', 'w') as f:
         json.dump(results, f, indent=2)
 
-    print('Done')
+    cam_test.reset_params_to_default()
+    print('Done.')
 
 if __name__ == '__main__':
     main()
