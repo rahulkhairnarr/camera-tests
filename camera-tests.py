@@ -47,45 +47,44 @@ class CameraTests(object):
 
         # Run different tests for changing camera parameters.
 
-        # Brightness: -64 --> 64
-        self.cam.update_title('Brightness Tests: from {} --> {}'.format(-64, 64))
-        time.sleep(5)
-        for val in range(-64, 64, 8):
-            print('Changing brghtness to: {}'.format(val))
-            self.cam.update_title('TEST: Brightness: {}'.format(val))
-            self.cam.set_param('brightness', val)
-            time.sleep(1)
+        # Brightness: -64 --> 64, default 0
+        self._cam_param_test_num('brightness', -64, 64, 4, 0)
 
-        print('Brightness tests complete. Resetting to default')
-        self.cam.update_title('TEST: Brightness: DEFAULT')
-        self.cam.reset_params_to_default()
-        time.sleep(5)
-
-        # Contrast: 0 --> 64
-        self.cam.update_title('Contrast Tests: from {} --> {}'.format(0, 64))
-        time.sleep(5)
-        for val in range(0, 64, 4):
-            print('Changing contrast to: {}'.format(val))
-            self.cam.update_title('TEST: Contrast: {}'.format(val))
-            self.cam.set_param('contrast', val)
-            time.sleep(1)
-
-        print('Contrast tests complete. Resetting to default')
-        self.cam.update_title('TEST: Contrast: DEFAULT')
-        self.cam.reset_params_to_default()
-        time.sleep(5)
+        # Contrast: 0 --> 64, default 32
+        self._cam_param_test_num('contrast', 0, 64, 4, 32)
 
         # Saturation: 0 --> 100, default 40
-        self.cam.update_title('Saturation Tests:{} --> {}, Default: {}'.format(0, 100, 40))
+        self._cam_param_test_num('saturation', 0, 100, 4, 40)
+
+        # Hue: -2000 --> 2000, default 0
+        self._cam_param_test_num('hue', -2000, 2000, 200, 0)
+
+        # Gamma: 100 --> 300, default 160
+        self._cam_param_test_num('gamma', 100, 300, 10, 160)
+
+        # sharpness: 1 --> 7, default 2
+        self._cam_param_test_num('sharpness', 1, 7, 1, 2)
+
+        # backlight_compensation: 0 --> 256, default 65
+        self._cam_param_test_num('backlight_compensation', 0, 256, 10, 65)
+
+        # TBD:
+        # These need to be set together to take effect.
+        # white_balance_temperature_auto & white_balance_temperature
+        # focus_auto and focus_absolute
+        # exposure_auto and exposure_absolute
+
+    def _cam_param_test_num(self, param, min, max, step, default):
+        self.cam.update_title('{} TEST:{} --> {}, Default: {}'.format(param, min, max, default))
         time.sleep(5)
-        for val in range(0, 100, 4):
-            print('Changing contrast to: {}'.format(val))
-            self.cam.update_title('TEST: Saturation: {}'.format(val))
-            self.cam.set_param('saturation', val)
+        for val in range(min, max, step):
+            print('Changing {} to: {}'.format(param, val))
+            self.cam.update_title('{} TEST: Saturation: {} [Default {}]'.format(param, val, default))
+            self.cam.set_param(param, val)
             time.sleep(1)
 
-        print('Saturation tests complete. Resetting to default')
-        self.cam.update_title('TEST: Saturation: DEFAULT')
+        print('{} tests complete. Resetting to defaults.')
+        self.cam.update_title('{} TEST: Resetting to defaults.'.format(param))
         self.cam.reset_params_to_default()
         time.sleep(5)
 
