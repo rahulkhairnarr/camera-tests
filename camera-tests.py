@@ -38,6 +38,7 @@ class CameraTests(object):
     def test_cam_params(self):
         # Start with 1080p resolution
         self.cam.update_resolution(1280, 720)
+        self.cam.reset_params_to_default()
 
         # Start the camera display on another thread.
         print('Starting camera display thread')
@@ -48,7 +49,7 @@ class CameraTests(object):
 
         # Brightness: -64 --> 64
         self.cam.update_title('Brightness Tests: from {} --> {}'.format(-64, 64))
-        time.sleep(2)
+        time.sleep(5)
         for val in range(-64, 64, 8):
             print('Changing brghtness to: {}'.format(val))
             self.cam.update_title('TEST: Brightness: {}'.format(val))
@@ -58,11 +59,11 @@ class CameraTests(object):
         print('Brightness tests complete. Resetting to default')
         self.cam.update_title('TEST: Brightness: DEFAULT')
         self.cam.reset_params_to_default()
-        time.sleep(2)
+        time.sleep(5)
 
         # Contrast: 0 --> 64
         self.cam.update_title('Contrast Tests: from {} --> {}'.format(0, 64))
-        time.sleep(2)
+        time.sleep(5)
         for val in range(0, 64, 4):
             print('Changing contrast to: {}'.format(val))
             self.cam.update_title('TEST: Contrast: {}'.format(val))
@@ -72,7 +73,22 @@ class CameraTests(object):
         print('Contrast tests complete. Resetting to default')
         self.cam.update_title('TEST: Contrast: DEFAULT')
         self.cam.reset_params_to_default()
-        time.sleep(2)
+        time.sleep(5)
+
+        # Saturation: 0 --> 100, default 40
+        self.cam.update_title('Saturation Tests:{} --> {}, Default: {}'.format(0, 100, 40))
+        time.sleep(5)
+        for val in range(0, 100, 4):
+            print('Changing contrast to: {}'.format(val))
+            self.cam.update_title('TEST: Saturation: {}'.format(val))
+            self.cam.set_param('saturation', val)
+            time.sleep(1)
+
+        print('Saturation tests complete. Resetting to default')
+        self.cam.update_title('TEST: Saturation: DEFAULT')
+        self.cam.reset_params_to_default()
+        time.sleep(5)
+
 
 if __name__ == '__main__':
     cam_tests = CameraTests()
