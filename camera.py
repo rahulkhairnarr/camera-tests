@@ -47,6 +47,11 @@ class Camera(object):
         self._thread.start()
         time.sleep(5)
 
+    def get_supported_resolutions(self):
+        print('Get supported resolutions')
+        # TODO: Get this from v4l2 command dynamically.
+        return config.get_supported_resolutions()
+
     def show_cam(self):
         # Camera must be opened before calling this method.
 

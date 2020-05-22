@@ -20,6 +20,7 @@ def exposure_test():
     # default 166
     # To change exposure, we should have exposure_auto set in manual mode (1)
     cam.set_param('exposure_auto', 1)
+    time.sleep(2)
     cam.cam_parameter_range_test('exposure_absolute', 3, 2047, 20, 166)
     time.sleep(5)
 
