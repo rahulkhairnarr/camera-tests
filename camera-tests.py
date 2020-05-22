@@ -37,7 +37,7 @@ class CameraTests(object):
 
     def test_cam_params(self):
         # Start with 1080p resolution
-        self.cam.update_resolution(1920, 1080)
+        self.cam.update_resolution(1280, 720)
 
         # Start the camera display on another thread.
         print('Starting camera display thread')
@@ -46,7 +46,9 @@ class CameraTests(object):
 
         # Run different tests for changing camera parameters.
 
-        # Brightness: 0 --> 64
+        # Brightness: -64 --> 64
+        self.cam.update_title('Brightness Tests: from {} --> {}'.format(-64, 64))
+        time.sleep(2)
         for val in range(-64, 64, 8):
             print('Changing brghtness to: {}'.format(val))
             self.cam.update_title('TEST: Brightness: {}'.format(val))
@@ -54,9 +56,13 @@ class CameraTests(object):
             time.sleep(1)
 
         print('Brightness tests complete. Resetting to default')
+        self.cam.update_title('TEST: Brightness: DEFAULT')
         self.cam.reset_params_to_default()
+        time.sleep(2)
 
         # Contrast: 0 --> 64
+        self.cam.update_title('Contrast Tests: from {} --> {}'.format(0, 64))
+        time.sleep(2)
         for val in range(0, 64, 4):
             print('Changing contrast to: {}'.format(val))
             self.cam.update_title('TEST: Contrast: {}'.format(val))
@@ -64,8 +70,9 @@ class CameraTests(object):
             time.sleep(1)
 
         print('Contrast tests complete. Resetting to default')
+        self.cam.update_title('TEST: Contrast: DEFAULT')
         self.cam.reset_params_to_default()
-
+        time.sleep(2)
 
 if __name__ == '__main__':
     cam_tests = CameraTests()
