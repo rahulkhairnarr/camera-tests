@@ -223,7 +223,7 @@ def main():
     with open('cam_params.json', 'w') as f:
         json.dump(results, f, indent=2)
 
-    cam_test.set_params('brightness', 30)
+    cam_test.set_param('brightness', 30)
 
     results = cam_test.get_params()
     with open('cam_params2.json', 'w') as f:
