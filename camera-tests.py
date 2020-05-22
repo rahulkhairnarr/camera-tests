@@ -59,5 +59,7 @@ class CameraTests(object):
 
 if __name__ == '__main__':
     cam_tests = CameraTests()
-    #cam_tests.test_fps_simple()
-    cam_tests.test_fps_iterative()
+    # cam_tests.test_fps_simple()
+    # cam_tests.test_fps_iterative()
+
+    cam_tests.test_cam_params()
