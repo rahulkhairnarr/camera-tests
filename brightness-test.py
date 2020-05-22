@@ -19,3 +19,7 @@ def brightness_test():
     # Range -64 --> 64
     # default 0
     cam.cam_parameter_range_test('brightness', -64, 64, 4, 0)
+
+
+if __name__ == '__main__':
+    brightness_test()
