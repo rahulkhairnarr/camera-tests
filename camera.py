@@ -14,11 +14,14 @@ class Camera(object):
         self.cam = None
         self.window_name = 'Camera'
         self.title = 'Camera Tests'
+        self.cam = cv2.VideoCapture(self.device)
+        self.window = cv2.namedWindow(self.window_name)
 
     def open_cam(self):
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
-        self.cam = cv2.VideoCapture(self.device)
-        self.window = cv2.namedWindow(self.window_name)
+        if self.cam is None:
+            self.cam = cv2.VideoCapture(self.device)
+            self.window = cv2.namedWindow(self.window_name)
 
     def close_cam(self):
         self.cam.release()
