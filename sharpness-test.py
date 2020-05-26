@@ -16,9 +16,9 @@ def sharpness_test():
     # Specify these parameter values
 
     # sharpness:
-    # Range -2000 --> 2000
-    # default 0
-    cam.cam_parameter_range_test('sharpness', -2000, 2000, 50, 0)
+    # Range 0 --> 7
+    # default 2
+    cam.cam_parameter_range_test('sharpness', 0, 7, 1, 2)
     time.sleep(5)
 
 if __name__ == '__main__':
