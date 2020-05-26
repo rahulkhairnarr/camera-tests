@@ -21,6 +21,9 @@ class Camera(object):
         self._thread = threading.Thread(target=self.show_cam_thread)
         self._thread.daemon = True
         self.save_feed = False
+
+    def enable_save_feed(self):
+        self.save_feed = True
         self.save_file = 'out-{}.avi'.format(datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
         self.vid_writer = None

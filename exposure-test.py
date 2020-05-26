@@ -3,6 +3,10 @@ from camera import Camera
 
 def exposure_test():
     cam = Camera()
+
+    # Enable saving video output
+    cam.enable_save_feed()
+
     cam.update_resolution(1280, 720)
     cam.reset_params_to_default()
 
