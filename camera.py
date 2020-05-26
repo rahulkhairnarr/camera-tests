@@ -6,6 +6,7 @@ import subprocess
 import re
 import json 
 import threading
+from datetime import datetime
 from singleton_decorator import singleton
 
 @singleton
@@ -19,6 +20,10 @@ class Camera(object):
         self.window = cv2.namedWindow(self.window_name)
         self._thread = threading.Thread(target=self.show_cam_thread)
         self._thread.daemon = True
+        self.save_feed = False
+        self.save_file = 'out-{}.avi'.format(datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+        self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        self.vid_writer = None
 
     def open_cam(self):
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
@@ -26,11 +31,19 @@ class Camera(object):
             self.cam = cv2.VideoCapture(self.device)
             self.window = cv2.namedWindow(self.window_name)
 
+            if self.save_feed is True:
+                self.vid_writer = cv2.VideoWriter(self.save_file, self.fourcc, 20.0, (640, 480))
+
     def close_cam(self):
         self.cam.release()
         self.cam = None
         cv2.destroyAllWindows()
         self.window = None
+
+        if self.vid_writer is not None:
+            self.vid_writer.release()
+            self.vid_writer = None
+
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
 
     def update_title(self, title):
@@ -108,6 +121,11 @@ class Camera(object):
                 txt_size = box_size[0]
                 txt_loc = (int(w - txt_size - 10), int(30))
                 cv2.putText(frame, res_txt, txt_loc, font, font_size, color, thickness)
+
+                # Save feed if that option is set.
+                if self.save_feed is True:
+                    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+                    self.vid_writer.write(hsv)
 
                 cv2.imshow(self.window_name, frame)
                 key = cv2.waitKey(10)
