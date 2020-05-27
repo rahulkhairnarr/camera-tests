@@ -16,6 +16,7 @@ class Camera(object):
         self.cam = None
         self.window_name = 'Camera'
         self.title = 'Camera Tests'
+        self.title2 = None
         self.cam = cv2.VideoCapture(self.device)
         self.window = cv2.namedWindow(self.window_name)
         self._thread = threading.Thread(target=self.show_cam_thread)
@@ -26,7 +27,8 @@ class Camera(object):
         self.save_feed = True
         self.save_file = 'out-{}.avi'.format(datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.vid_writer = None
+        self.vid_writer = cv2.VideoWriter(self.save_file, self.fourcc, 10.0, (640, 480))
+        print('Fourcc: {}, video writer: {}'.format(self.fourcc, self.vid_writer))
 
     def open_cam(self):
         print('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
@@ -34,8 +36,6 @@ class Camera(object):
             self.cam = cv2.VideoCapture(self.device)
             self.window = cv2.namedWindow(self.window_name)
 
-            if self.save_feed is True:
-                self.vid_writer = cv2.VideoWriter(self.save_file, self.fourcc, 20.0, (640, 480))
 
     def close_cam(self):
         self.cam.release()
@@ -52,6 +52,12 @@ class Camera(object):
     def update_title(self, title):
         # Update title within the imshow window.
         self.title = title
+        self.title2 = None
+
+    def update_title2(self, title1, title2=None):
+        # Update both lines of the title
+        self.title = title1
+        self.title2 = title2
 
     def show_cam_thread(self):
         self.open_cam()
@@ -100,7 +106,7 @@ class Camera(object):
                 fps = num_frames / time_diff
 
                 font = cv2.FONT_HERSHEY_PLAIN
-                font_size = 2
+                font_size = 1
                 thickness = 2
                 color = (230, 80, 0)
 
@@ -110,6 +116,14 @@ class Camera(object):
                 txt_size = box_size[0]
                 txt_loc = (20, 35)
                 cv2.putText(frame, title_txt, txt_loc, font, font_size, color, thickness)
+
+                # Print second line of the title in Top Left (if available)
+                if self.title2 is not None: 
+                    title2_txt = self.title2
+                    box_size, _ = cv2.getTextSize(title2_txt, font, font_size, thickness)
+                    txt_size = box_size[0]
+                    txt_loc = (20, 75)
+                    cv2.putText(frame, title_txt, txt_loc, font, font_size, color, thickness)
 
                 # Print FPS in the bottom right
                 fps_txt = 'FPS: {:.2f}'.format(fps)
@@ -127,8 +141,9 @@ class Camera(object):
 
                 # Save feed if that option is set.
                 if self.save_feed is True:
-                    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-                    self.vid_writer.write(hsv)
+                    #hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+                    #self.vid_writer.write(hsv)
+                    self.vid_writer.write(frame)
 
                 cv2.imshow(self.window_name, frame)
                 key = cv2.waitKey(10)
@@ -288,7 +303,9 @@ class Camera(object):
         print('Done.')
 
     def cam_parameter_range_test(self, param, min, max, step, default):
-        self.update_title('{} TESTS: {} --> {}, Default: {}'.format(param, min, max, default))
+        self.update_title2('{} TEST'.format(param),
+                '{} --> {}, Default: {}'.format(min, max, default))
+
         time.sleep(5)
         for val in range(min, max, step):
             print('Changing {} to: {}'.format(param, val))
@@ -300,6 +317,24 @@ class Camera(object):
         self.update_title('{} TEST: Resetting to defaults.'.format(param))
         self.reset_params_to_default()
         time.sleep(5)
+
+    def cam_parameter_range_test_quick(self, param, min, max, step, default, rangelist=None):
+        self.update_title('{} TESTS: {} --> {}, Default: {}'.format(param, min, max, default))
+        time.sleep(2)
+
+        if rangelist is None:
+            rangelist = list(range(min, max, step))
+
+        for val in rangelist:
+            print('Changing {} to: {}'.format(param, val))
+            self.update_title('{}: Current {}, Default {}'.format(param.upper(), val, default))
+            self.set_param(param, val)
+            time.sleep(2)
+
+        print('{} tests complete. Resetting to defaults.')
+        self.update_title('{} TEST: Resetting to defaults.'.format(param))
+        self.reset_params_to_default()
+
 
 def main():
     cam_test = Camera()
