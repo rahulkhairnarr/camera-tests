@@ -26,9 +26,9 @@ def exposure_test():
     cam.set_param('exposure_auto', 1)
     time.sleep(2)
 
-    rangelist = [3, 10, 20, 40, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 300, 400, 600, 800, 1200, 1400, 1600, 2000]
+    rangelist = [20, 60, 78, 120, 166, 250, 400, 700, 1000, 1500, 2000]
 
-    cam.cam_parameter_range_test_quick('exposure_absolute', 3, 2047, 20, 166, rangelist)
+    cam.cam_parameter_range_test2('exposure_absolute', 'EXPOSURE TEST', 3, 2047, 20, 166, rangelist)
     time.sleep(2)
 
 if __name__ == '__main__':

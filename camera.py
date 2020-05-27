@@ -22,6 +22,9 @@ class Camera(object):
         self._thread = threading.Thread(target=self.show_cam_thread)
         self._thread.daemon = True
         self.save_feed = False
+        self.vid_writer = None
+        self.fourcc = None
+        self.save_file = None
 
     def enable_save_feed(self):
         self.save_feed = True
@@ -35,7 +38,6 @@ class Camera(object):
         if self.cam is None:
             self.cam = cv2.VideoCapture(self.device)
             self.window = cv2.namedWindow(self.window_name)
-
 
     def close_cam(self):
         self.cam.release()
@@ -84,6 +86,7 @@ class Camera(object):
 
         start_time = time.time()
         num_frames = 0
+        fps = 0.0
         key = None
 
         while True:
@@ -91,7 +94,11 @@ class Camera(object):
 
             # This is needed to keep FPS as a moving average of last 10 frames
             if num_frames % 10 == 0:
-                num_frames = 1
+                end_time = time.time()
+                time_diff = end_time - start_time
+                fps = num_frames / time_diff
+                
+                num_frames = 0
                 start_time = time.time()
 
             ret, frame = self.cam.read()
@@ -101,9 +108,13 @@ class Camera(object):
 
             try:
 
-                end_time = time.time()
-                time_diff = end_time - start_time
-                fps = num_frames / time_diff
+#                end_time = time.time()
+#                time_diff = end_time - start_time
+#                fps = num_frames / time_diff
+#                fps_arr[num_frames % 5] = fps
+#                avg_fps = sum(fps_arr)/5
+#
+#                print(fps, avg_fps)
 
                 font = cv2.FONT_HERSHEY_PLAIN
                 font_size = 1
@@ -122,8 +133,8 @@ class Camera(object):
                     title2_txt = self.title2
                     box_size, _ = cv2.getTextSize(title2_txt, font, font_size, thickness)
                     txt_size = box_size[0]
-                    txt_loc = (20, 75)
-                    cv2.putText(frame, title_txt, txt_loc, font, font_size, color, thickness)
+                    txt_loc = (20, 60)
+                    cv2.putText(frame, title2_txt, txt_loc, font, font_size, color, thickness)
 
                 # Print FPS in the bottom right
                 fps_txt = 'FPS: {:.2f}'.format(fps)
@@ -164,9 +175,10 @@ class Camera(object):
                 print('Exception: {}'.format(str(ex)))
                 pass
 
-        end_time = time.time()
-        time_diff = end_time - start_time
-        fps = num_frames / time_diff
+        #end_time = time.time()
+        #time_diff = end_time - start_time
+        #fps = num_frames / time_diff
+
         print('Camera stopped.')
         print('Total duration: {:.2f} seconds.'.format(time_diff))
         print('FPS: {:.2f} frames per second.'.format(fps))
@@ -318,8 +330,8 @@ class Camera(object):
         self.reset_params_to_default()
         time.sleep(5)
 
-    def cam_parameter_range_test_quick(self, param, min, max, step, default, rangelist=None):
-        self.update_title('{} TESTS: {} --> {}, Default: {}'.format(param, min, max, default))
+    def cam_parameter_range_test2(self, param, title, min, max, step, default, rangelist=None):
+        self.update_title2(title, '{} --> {}, Default: {}'.format(min, max, default))
         time.sleep(2)
 
         if rangelist is None:
@@ -327,9 +339,9 @@ class Camera(object):
 
         for val in rangelist:
             print('Changing {} to: {}'.format(param, val))
-            self.update_title('{}: Current {}, Default {}'.format(param.upper(), val, default))
+            self.update_title2(title, 'Current {}, Default {}'.format(val, default))
             self.set_param(param, val)
-            time.sleep(2)
+            time.sleep(3)
 
         print('{} tests complete. Resetting to defaults.')
         self.update_title('{} TEST: Resetting to defaults.'.format(param))
