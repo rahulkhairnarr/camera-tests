@@ -48,11 +48,39 @@ source venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 
-## Camera configuration
-We have to configure the correct camera inputs and resolutions before running the test cases.
+## Camera Test Configuration
+You can configure the input camera device by editing `device` variable in `config.py`. Change this to the camera to be tested. You can find the connected cameras using `v4l2-ctl --list-devices`
+```
+device = "/dev/video0"
+```
+
+The cameras can support multiple resolutions. Update the field `resolutions` in `config.py` to add/remove any resolutions to be tested. (The supported resolutions for the device can be found using `v4l2-ctl --device /dev/video0 --list-formats-ext`).
+
+```
+resolutions = [
+    (640, 480),
+    (800, 600),
+    (1024, 768),
+    (1280, 720),
+    (1280, 960),
+]
+```
 
 
-## Run Tests
+## Test Suite
+#### Test default resolution video capture and calculate FPS.
+* **Objective**: Get resolution for default resolution
+* **Run Command**: `python3 fps-test-simple.py` 
+* **Output**: This test will open a OpenCV display window showing current video. It will capture 120 frames and print out the FPS obtained. 
+
+
+#### Test all supported resolutions and calculate FPS for each.
+* **Objective**: Iterate through all resolutions to be tested. Calculate & display FPS for each resolution.  
+* **Run Command**: `python3 resolutions-test.py` 
+* **Output**: This test will open an OpenCV display window showing current video, resolution and the FPS obtained. To go to the next resolution, hit "SPACE" key. To exit the program, hit "ESC".
+
+
+
 * Run individual tests
   * This will open a OpenCV window and iterate through different brightness values.
   * There are other similar tests for updating other parameters. Ex: `contrast-test.py`, `gamma-test.py`, `hue-test.py` etc.

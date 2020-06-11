@@ -1,22 +1,16 @@
 import cv2
 import time
-import psutil
-import platform
 import config
 
-def calc_fps():
-    device = config.get_device()
+def test_fps_simple():
+    device = config.device
     video = cv2.VideoCapture(device)
 
     fps = video.get(cv2.CAP_PROP_FPS)
     print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
 
-    w, h = 1280, 720
-    size_new = video.set(cv2.CAP_PROP_FRAME_WIDTH, w), video.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
-    size = video.get(cv2.CAP_PROP_FRAME_WIDTH), video.get(cv2.CAP_PROP_FRAME_HEIGHT)
-
-    fps = video.get(cv2.CAP_PROP_FPS)
-    print("NEW Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+    w, h = video.get(cv2.CAP_PROP_FRAME_WIDTH), video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    print("Using default resolution: {}x{}".format(w, h))
 
     # Number of frames to capture
     num_frames = 120
@@ -26,13 +20,13 @@ def calc_fps():
     start = time.time()
 
     # Grab a few frames
-    num_frames = 0
+    frame_idx = 0
     while True:
-        num_frames+=1
+        frame_idx+=1
 
         ret, frame = video.read()
 
-        if num_frames >= 100:
+        if frame_idx >= num_frames:
             break
 
         try:
@@ -47,14 +41,14 @@ def calc_fps():
 
     # Time elapsed
     seconds = end - start
-    print("Time taken : {} seconds, Num Frames: {}".format(seconds, num_frames))
+    print("Time taken : {:.2f} seconds, Num Frames Captured: {}".format(seconds, num_frames))
 
     # Calculate frames per second
     fps = num_frames / seconds
-    print("Estimated frames per second : {0}".format(fps))
+    print("Estimated frames per second : {:.2f}".format(fps))
 
     # Release video
     video.release()
 
 if __name__ == '__main__':
-    calc_fps()
+    test_fps_simple()
