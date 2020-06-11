@@ -1,17 +1,18 @@
 # USB Camera Tests
+This repository provides automated test cases for validating USB web-camera functionality. This is supported for USB cameras through v4l2 driver. This test-suite is validated on Ubuntu 18.04 operating system with Intel and NVIDIA Jetson chipsets.
 
-This repository provides automated test cases for validating web-camera functionality. This is supported for USB cameras through v4l2 driver.
+This library uses Python OpenCV package and v4l2-ctl library for validation. 
 
 ## Pre-requisites
-This test-suite is validated on Ubuntu 18.04 operating system with Intel and NVIDIA Jetson chipsets.
 
-* Install Python 3.x Latest Version
+* Install latest Python 3.x and PIP library.
 ```
 sudo apt-get update
 sudo apt-get install python3.6
+sudo apt-get install python3-pip
 ```
 
-* Validate Python is working
+* Validate ```python3``` & ```pip3``` are working. 
 ```
 python3 --version
 ```
@@ -31,14 +32,25 @@ v4l2-ctl --list-devices
 ## Installation
 * Clone this repository
 ```
-git clone https://coolertech@dev.azure.com/coolertech/mp-on-shelf-availability/_git/camera-tests
+git clone <this-repo>
 cd camera-tests
 ```
 
-* Install python dependencies (create a virtual env if needed)
+* (Optional) Create a Python virtual environment.
 ```
-pip3 install -r requirements.txt
+python3 -m pip install --user virtualenv
+python3 -m venv venv
+source venv/bin/activate
+``` 
+
+* Install python dependencies 
 ```
+python3 -m pip install -r requirements.txt
+```
+
+## Camera configuration
+We have to configure the correct camera inputs and resolutions before running the test cases.
+
 
 ## Run Tests
 * Run individual tests
