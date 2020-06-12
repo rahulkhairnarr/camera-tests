@@ -8,22 +8,22 @@ device = "/dev/video2"
 # You can find these by v4l2-ctl --list-formats-ext
 # Update to add/remove resolutions as needed.
 resolutions = [
-    (640, 480),
-    (800, 600),
-    (1024, 768),
-    (1280, 720),
+    # (640, 480),
+    # (800, 600),
+    # (1024, 768),
+    # (1280, 720),
     (1280, 960),
     (1600, 1200),
-    # (1920, 1080),
+    (1920, 1080),
     (2048, 1536),
     (2592, 1944),
-    (3264, 2448)
+    # (3264, 2448)
 ]
 
 # DEFAULT RESOLUTION
 # Parameter tests can be run for any single resolution.
 # Update this field to update the default resolution of testing.
-default_resolution = (800, 600)
+default_resolution = (1280, 960)
 
 # PARAMETER RANGES
 # Update the parameter ranges to configure your test case.
@@ -50,31 +50,31 @@ parameters = {
         'min': 0,
         'max': 64,
         'step': 4,
-        'default': 32
+        'default': 30
     },
     'saturation' : {
         'min': 0,
         'max': 100,
         'step': 10,
-        'default': 40
+        'default': 64
     },
     'hue': {
         'min': -2000,
         'max': 2000,
         'step': 100,
-        'default': 0
+        'default': 80
     },
     'gamma' : {
-        'min': 100,
-        'max': 300,
-        'step': 10,
-        'default': 160
+        'min': 0,
+        'max': 2,
+        'step': 1,
+        'default': 0
     },
     'sharpness' : {
         'min': 1,
         'max': 7,
         'step': 1,
-        'default': 2
+        'default': 3
     }
 }
 
