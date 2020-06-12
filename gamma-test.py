@@ -1,25 +1,39 @@
 import time
 from camera import Camera
+import threading
+import atexit
 
-def gamma_test():
-    cam = Camera()
-    cam.update_resolution(1280, 720)
+cam = Camera()
+cam.open_cam()
+cam.set_default_resolution()
+
+def cleanup():
     cam.reset_params_to_default()
 
-    # Start the camera display on another thread.
-    cam.start_cam_thread()
+atexit.register(cleanup)
 
-    # Change the gamma values for camera.
-    # TODO: Automatically get supported gamma values and test them here.
-    # For now, get the gamma values for your camera through:
-    # v4l2-ctl -d /dev/video0 --list-ctrls
-    # Specify these parameter values
+def gamma_test_thread():
+    # Run the gamma test in a range.:
+    gamma_range = cam.get_params_range('gamma')
+    cam.cam_parameter_range_test(
+        'gamma',
+        gamma_range['min'],
+        gamma_range['max'],
+        gamma_range['step'],
+        gamma_range['default'])
 
-    # gamma:
-    # Range 100 --> 300
-    # default 160
-    cam.cam_parameter_range_test('gamma', 100, 300, 5, 160)
-    time.sleep(5)
+    time.sleep(2)
+    print()
+    print('- - - - - - - - - - - - - - - - - - - - ')
+    print('Press ESC or CTRL+C to Quit.')
+    print('- - - - - - - - - - - - - - - - - - - - ')
+
+def gamma_test():
+    _thread = threading.Thread(target=gamma_test_thread, daemon=True)
+    _thread.start()
+
+    cam.show_cam()
+    cam.close_cam()
 
 if __name__ == '__main__':
     gamma_test()

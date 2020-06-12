@@ -1,26 +1,39 @@
 import time
 from camera import Camera
+import threading
+import atexit
 
-def brightness_test():
-    cam = Camera()
-    cam.update_resolution(1280, 720)
+cam = Camera()
+cam.open_cam()
+cam.set_default_resolution()
+
+def cleanup():
     cam.reset_params_to_default()
 
-    # Start the camera display on another thread.
-    cam.start_cam_thread()
+atexit.register(cleanup)
 
-    # Change the brightness values for camera.
-    # TODO: Automatically get supported brightness values and test them here.
-    # For now, get the brightness values for your camera through:
-    # v4l2-ctl -d /dev/video0 --list-ctrls
-    # Specify these parameter values
+def brightness_test_thread():
+    # Run the brightness test in a range.:
+    brightness_range = cam.get_params_range('brightness')
+    cam.cam_parameter_range_test(
+        'brightness',
+        brightness_range['min'],
+        brightness_range['max'],
+        brightness_range['step'],
+        brightness_range['default'])
 
-    # Brightness:
-    # Range -64 --> 64
-    # default 0
-    cam.cam_parameter_range_test('brightness', -64, 64, 4, 0)
-    time.sleep(5)
+    time.sleep(2)
+    print()
+    print('- - - - - - - - - - - - - - - - - - - - ')
+    print('Press ESC or CTRL+C to Quit.')
+    print('- - - - - - - - - - - - - - - - - - - - ')
 
+def brightness_test():
+    _thread = threading.Thread(target=brightness_test_thread, daemon=True)
+    _thread.start()
+
+    cam.show_cam()
+    cam.close_cam()
 
 if __name__ == '__main__':
     brightness_test()

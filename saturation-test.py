@@ -1,25 +1,39 @@
 import time
 from camera import Camera
+import threading
+import atexit
 
-def saturation_test():
-    cam = Camera()
-    cam.update_resolution(1280, 720)
+cam = Camera()
+cam.open_cam()
+cam.set_default_resolution()
+
+def cleanup():
     cam.reset_params_to_default()
 
-    # Start the camera display on another thread.
-    cam.start_cam_thread()
+atexit.register(cleanup)
 
-    # Change the saturation values for camera.
-    # TODO: Automatically get supported saturation values and test them here.
-    # For now, get the saturation values for your camera through:
-    # v4l2-ctl -d /dev/video0 --list-ctrls
-    # Specify these parameter values
+def saturation_test_thread():
+    # Run the saturation test in a range.:
+    saturation_range = cam.get_params_range('saturation')
+    cam.cam_parameter_range_test(
+        'saturation',
+        saturation_range['min'],
+        saturation_range['max'],
+        saturation_range['step'],
+        saturation_range['default'])
 
-    # saturation:
-    # Range 0 --> 100
-    # default 40
-    cam.cam_parameter_range_test('saturation', 0, 100, 4, 0)
-    time.sleep(5)
+    time.sleep(2)
+    print()
+    print('- - - - - - - - - - - - - - - - - - - - ')
+    print('Press ESC or CTRL+C to Quit.')
+    print('- - - - - - - - - - - - - - - - - - - - ')
+
+def saturation_test():
+    _thread = threading.Thread(target=saturation_test_thread, daemon=True)
+    _thread.start()
+
+    cam.show_cam()
+    cam.close_cam()
 
 if __name__ == '__main__':
     saturation_test()

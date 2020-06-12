@@ -15,6 +15,12 @@ def all_resolutions_test():
     for res in resolutions:
         cam.open_cam()
         cam.update_resolution(res[0], res[1])
+
+        print()
+        print('Press SPACE Key to continue to next resolution.')
+        print('Press ESC Key to Quit...')
+        print()
+
         exit_prog = cam.show_cam()
         cam.close_cam()
 

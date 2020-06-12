@@ -1,25 +1,39 @@
 import time
 from camera import Camera
+import threading
+import atexit
 
-def hue_test():
-    cam = Camera()
-    cam.update_resolution(1280, 720)
+cam = Camera()
+cam.open_cam()
+cam.set_default_resolution()
+
+def cleanup():
     cam.reset_params_to_default()
 
-    # Start the camera display on another thread.
-    cam.start_cam_thread()
+atexit.register(cleanup)
 
-    # Change the hue values for camera.
-    # TODO: Automatically get supported hue values and test them here.
-    # For now, get the hue values for your camera through:
-    # v4l2-ctl -d /dev/video0 --list-ctrls
-    # Specify these parameter values
+def hue_test_thread():
+    # Run the hue test in a range.:
+    hue_range = cam.get_params_range('hue')
+    cam.cam_parameter_range_test(
+        'hue',
+        hue_range['min'],
+        hue_range['max'],
+        hue_range['step'],
+        hue_range['default'])
 
-    # hue:
-    # Range -2000 --> 2000
-    # default 0
-    cam.cam_parameter_range_test('hue', -2000, 2000, 50, 0)
-    time.sleep(5)
+    time.sleep(2)
+    print()
+    print('- - - - - - - - - - - - - - - - - - - - ')
+    print('Press ESC or CTRL+C to Quit.')
+    print('- - - - - - - - - - - - - - - - - - - - ')
+
+def hue_test():
+    _thread = threading.Thread(target=hue_test_thread, daemon=True)
+    _thread.start()
+
+    cam.show_cam()
+    cam.close_cam()
 
 if __name__ == '__main__':
     hue_test()
