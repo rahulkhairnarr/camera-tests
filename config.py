@@ -1,7 +1,7 @@
 
 # DEVICE NAME
 # Device name to test. You can find it via: v4l2-ctl --list-devices
-device = "/dev/video2"
+device = "/dev/video0"
 
 # RESOLUTIONS
 # Different resolutions to be tested.
