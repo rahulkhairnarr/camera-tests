@@ -1,6 +1,10 @@
 import cv2
 import time
 import config
+import datetime
+
+image_capture_enabled = True
+display_window_enabled = False
 
 def test_fps_simple():
     device = config.device
@@ -29,12 +33,17 @@ def test_fps_simple():
         if frame_idx >= num_frames:
             break
 
-        try:
-            cv2.imshow('Test', frame)
-            if cv2.waitKey(10) == 27:
-                break  # esc to quit
-        except Exception as ex:
-            pass
+        if display_window_enabled:
+            try:
+                cv2.imshow('Test', frame)
+                if cv2.waitKey(10) == 27:
+                    break  # esc to quit
+            except Exception as ex:
+                pass
+
+        if image_capture_enabled and frame_idx % 10 == 0:
+            cv2.imwrite(datetime.datetime.now().isoformat() + '.jpg', frame)
+
 
     # End time
     end = time.time()
