@@ -10,7 +10,7 @@ dev2 = '/dev/video2'
 
 camera_0_enabled = True
 camera_1_enabled = True
-camera_2_enabled = False
+camera_2_enabled = True 
 image_capture_enabled = False 
 display_window_enabled = True 
 
