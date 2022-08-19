@@ -20,7 +20,7 @@ python3 --version
 * Install Video4Linux2 Dependencies
 ```
 sudo apt-get update
-suto apt-get install v4l-utils
+sudo apt-get install v4l-utils
 ```
 
 * Validate v4l2 is working
